@@ -9,7 +9,7 @@ select
     amount,
     created
 
-from `maderi-cdp.dbt_glee.`.stripe_payments
+from {{ source('stripe', 'stripe_payments') }}
 
 
 

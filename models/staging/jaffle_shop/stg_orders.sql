@@ -7,7 +7,7 @@ select
     order_date,
     status
 
-from `maderi-cdp.dbt_glee.`.jaffle_shop_orders
+from {{ source('jaffle_shop', 'jaffle_shop_orders') }}
 
 
 

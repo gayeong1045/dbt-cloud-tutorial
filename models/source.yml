@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: jaffle_shop
+    database: maderi-cdp
+    schema: dbt_glee
+    tables:
+      - name: jaffle_shop_customers
+      - name: jaffle_shop_orders
+  - name: stripe
+    database: maderi-cdp
+    schema: dbt_glee
+    tables:
+      - name: stripe_payments
+      

@@ -6,7 +6,7 @@ select
     first_name,
     last_name
 
-from `maderi-cdp.dbt_glee.`.jaffle_shop_customers
+from {{ source('jaffle_shop', 'jaffle_shop_customers') }}
 
 
 
