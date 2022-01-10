@@ -6,7 +6,7 @@ select
     first_name,
     last_name
 
-from `dbt-tutorial`.jaffle_shop.customers
+from `maderi-cdp.dbt_glee.`.jaffle_shop_customers
 
 
 
@@ -21,7 +21,7 @@ select
     order_date,
     status
 
-from `dbt-tutorial`.jaffle_shop.orders
+from `maderi-cdp.dbt_glee.`.jaffle_shop_orders
 
 
 
