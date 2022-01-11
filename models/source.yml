@@ -6,6 +6,11 @@ sources:
     schema: dbt_glee
     tables:
       - name: jaffle_shop_customers
+        columns:
+          - name: id
+            tests:
+              - unique
+              - not_null
       - name: jaffle_shop_orders
   - name: stripe
     database: maderi-cdp
