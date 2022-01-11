@@ -12,4 +12,3 @@ sources:
     schema: dbt_glee
     tables:
       - name: stripe_payments
-      
