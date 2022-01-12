@@ -2,8 +2,10 @@ version: 2
 
 models: 
   - name: stg_customers
+    description: 각 행마다 하나의 unique한 고객정보
     columns:
       - name: customer_id
+        description: stg_customers의 primary key
         tests:
           - unique
           - not_null
