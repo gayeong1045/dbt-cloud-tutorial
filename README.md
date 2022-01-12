@@ -117,22 +117,129 @@
 
 ### 1) 개요
 
+- test 사용 이유: 각 모델(변경된 데이터)들이 대시보드에 들어가거나 다운로드 받기 전 
+믿을 수 있는 데이터인지 검사하기 위함
 - dbt project에 Test를 추가하면 project의 models들이 올바르게 작동하는지 확인할 수 있음
 - 데이터의 무결성(integrity)을 지키기 위한 일종의 검사. 데이터 무결성에 대한 내용은 아래 링크 참고
     
     참고: 데이터 무결성 - [https://azurecourse.tistory.com/556](https://azurecourse.tistory.com/556)
     
+- 코드를 작성하는 도중 test를 통해 모듈이 잘 돌아가는지 검사할 수 있음
+- 테스트를 언제 실행할 지 예약할 수 도 있음
+- 명령어 ‘dbt test’ 실행 후 모든 test가 passed인지 확인
 
-### 2) Test 실행 가이드
+### 2) Generic tests
 
+- generic tests : unique, not_null, accepted_values, relationships 등이 전반적인 모델에 적용되고 있는지 확인
 - models 디렉토리에 YAML 파일 생성 (ex: models/schema.yml)
+- accepted_values:모든 컬럼에 있는 값이 미리 정의한 값 내에 있는지
+- relationship: 모든 컬럼에 있는 값이 다른 테이블에 있는 컬럼 값 안에 있는지
+- dbt test --select test_type:generic : generic test만 실행되는 명령어
 - YAML 파일에 아래와 같이 입력하면 코드가 의미하는 바는 ‘customers’ model의 ‘customer_id’의 column값이 unique하고 null값이 아닌지 확인
     
+    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/343ed961-dceb-4163-9479-bea563bd58e2/Untitled.png)
     
-    - YAML 파일 입력시 ‘version: 2’ 꼭 추가
+    - YAML 파일 입력 시 ‘version: 2’ 꼭 추가
+- relationship 코드 참고
+    
+    tests:
+    - relationships:
+    to: ref('stg_customers')
+    field: customer_id
+    
+- accepted_values 코드 참고
+    
+    tests:
+    - accepted_values:
+    values:
+    - completed
+    - shipped
+    - returned
+    - return_pending
+    - placed
+    
+
+### 3) Singular tests
+
+- singular tests : 1~2개에 모델에 적용하며, 특정 로직이 모델에 적용되고 있는지 확인
+- tests 파일에 sql 파일 생성
+- dbt test --select test_type:singular : singular test만 실행되는 명령어
+
+### 4) Testing Sources
+
+- 소스.yml 파일에 tests 문을 추가할 수 있음
+- 명령어 : dbt test —select source:소스명
 
 ## 05. Documentation
 
 ### 1) 개요
 
 - dbt는 database model에 대해 documentation, 즉 문서화 기능을 제공함
+- documentation을 통해 model에 대한 설명을 입력할 수 있고 협업 시 정보 공유에 유용함
+- documentation 기능은 데이터베이스 테이블의 모든 column값과 model의 관계를 자동으로 문서화 해줌
+- 사용자는 테이블의 column에 대한 설명이나 model에 대한 설명을 입력하면 됨
+- DAG : raw data부터 final data가 되기까지 데이터의 흐름을 자동으로 보여줌
+
+### 2) Documentation 실행 가이드
+
+- 위 Test의 코드에 아래와 같이 description 코드를 추가하면 documentation 기능 활성화
+    
+    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ffcf4b11-7a37-460d-af04-71985f6d8978/Untitled.png)
+    
+- 명령어 ‘dbt docs generate’ 실행 시 문서화 진행
+- documentation을 확인하기 위한 두 가지 방법
+    - dbt Cloud IDE 좌측 상단 햄버거 메뉴 목록 중 ‘Develop’에서 다음과 같이 빨간 박스 부분 ‘view docs’에서 확인 가능
+    
+    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/19a68c57-0b67-4c43-9805-46c32cb2cee9/Untitled.png)
+    
+    - dbt Cloud IDE 좌측 상단 햄버거 메뉴 목록 중 ‘Run History’에서도 확인 가능. 단, deployment 과정 진행 후 확인 가능. Deployment는 06번 항목에서 확인 가능
+    
+- documentation을 할 수 있는 또 다른 방법은 md 파일을 만들어 YAML 파일로 참조하는 것
+- 아래와 같은 코드를 새로운 md 파일에 입력 (ex: models/customers.md)
+    
+    {% docs **문서명** %}  * 해당 문서명을 yml 파일에서 참조
+    
+    ========================================
+    
+    {% docs customers %}                      /* customers model에 대한 documentation 시작 */
+    
+    This is the customers model.           
+    
+    Here is a [link]([google.com](http://google.com))             /* [link](google.com) : google.com 하이퍼링크 생성 *
+    
+    * and a bullet point                            /*  * 입력시 bullet point 생성 *
+    
+    ****bold**** *_italic_*                      
+    
+    {% enddocs %}                                   /* customers model에 대한 documentation 끝 */
+    
+- 생성한 md 파일을 {{ doc(’md파일이름’) }}을 사용하여 다음과 같이 YAML 파일에 연결할 수 있음
+    
+    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/dfe15968-17cf-4820-8507-bbebeb9d0ada/Untitled.png)
+    
+    - md 파일을 이용하면 긴 설명글을 입력하기 용이함
+    
+
+## 06. Deployment
+
+### 1) 개요
+
+- Project가 커지면서 데이터베이스도 커지면 테이블을 주기적으로 업데이트해야함
+- 이를 ‘deploying a project’ 혹은 ‘running a project in production’을 의미함.
+- deployment는 수동적으로 데이터베이스를 업데이트하지 않고 타이머를 맞춰놓으면 자동으로 타이머에 따라 업데이트 진행할 수 있게 해줌. (자동화 기능)
+
+### 2) Deployment 실행 가이드
+
+- Deployment environment 만들기
+    - 좌측 상단 햄버거 메뉴 목록 중 ‘Environment’
+    - ‘New Environment’ 버튼 클릭
+    - Name 입력, Type은 Deployment로 지정, 타겟 dataset을 dataset 항목에 입력
+- Job 만들고 실행하기
+    - job: 주기적으로 실행할 dbt 명령어의 집합 (ex: dbt run, dbt test)
+    - 좌측 상단 햄버거 메뉴 목록 중 ‘Jobs’
+    - ‘New job’ 버튼 클릭
+    - Name 입력, Environment 선택
+    - ‘Generate docs’ 체크박스 체크
+    - dbt run, dbt test 등 add command
+    - Triggers란에서는 Schedule, Webhooks(git 자동 연동), API 설정 가능
+    - save 후 Run now 실행
