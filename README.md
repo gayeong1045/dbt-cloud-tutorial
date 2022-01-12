@@ -137,7 +137,6 @@
 - dbt test --select test_type:generic : generic test만 실행되는 명령어
 - YAML 파일에 아래와 같이 입력하면 코드가 의미하는 바는 ‘customers’ model의 ‘customer_id’의 column값이 unique하고 null값이 아닌지 확인
     
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/343ed961-dceb-4163-9479-bea563bd58e2/Untitled.png)
     
     - YAML 파일 입력 시 ‘version: 2’ 꼭 추가
 - relationship 코드 참고
@@ -184,13 +183,11 @@
 
 - 위 Test의 코드에 아래와 같이 description 코드를 추가하면 documentation 기능 활성화
     
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ffcf4b11-7a37-460d-af04-71985f6d8978/Untitled.png)
     
 - 명령어 ‘dbt docs generate’ 실행 시 문서화 진행
 - documentation을 확인하기 위한 두 가지 방법
     - dbt Cloud IDE 좌측 상단 햄버거 메뉴 목록 중 ‘Develop’에서 다음과 같이 빨간 박스 부분 ‘view docs’에서 확인 가능
     
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/19a68c57-0b67-4c43-9805-46c32cb2cee9/Untitled.png)
     
     - dbt Cloud IDE 좌측 상단 햄버거 메뉴 목록 중 ‘Run History’에서도 확인 가능. 단, deployment 과정 진행 후 확인 가능. Deployment는 06번 항목에서 확인 가능
     
@@ -215,7 +212,6 @@
     
 - 생성한 md 파일을 {{ doc(’md파일이름’) }}을 사용하여 다음과 같이 YAML 파일에 연결할 수 있음
     
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/dfe15968-17cf-4820-8507-bbebeb9d0ada/Untitled.png)
     
     - md 파일을 이용하면 긴 설명글을 입력하기 용이함
     
